@@ -2,9 +2,35 @@
 import axios from "axios";
 import { API_BASE_URL } from "../config/api";
 
+const API_CONFIG_HINT_HE =
+  "לא נמצא שרת ה־API. אם האתר רץ ב־Vercel, הגדרו במשתני הסביבה של הפרויקט את VITE_API_BASE_URL לכתובת המלאה של הבאק־אנד (ללא /api בסוף), ובצעו deploy מחדש לפרונט.";
+
 /** Turn API / axios error payloads into a single human-readable string. */
 export function stringifyApiError(error, fallbackMessage = "An unexpected error occurred") {
+  const status = error?.response?.status;
   const data = error?.response?.data;
+
+  // Hosted frontend defaults to relative /api → on Vercel static hosting this returns 404 HTML (“Not Found” page).
+  if (status === 404) {
+    const bodyStr = typeof data === "string" ? data : "";
+    const looksLikeHtml =
+      /<!DOCTYPE html/i.test(bodyStr) ||
+      /<html[\s>]/i.test(bodyStr) ||
+      /could not be found/i.test(bodyStr) ||
+      /\bnot found\b/i.test(bodyStr);
+    const viteBase = String(import.meta.env.VITE_API_BASE_URL ?? "").trim();
+    if (import.meta.env.PROD && !viteBase) return API_CONFIG_HINT_HE;
+    if (looksLikeHtml) {
+      return viteBase
+        ? "הבקשה לא הגיעה לבאק־אנד (404). ייתכן ש־VITE_API_BASE_URL שגוי או שהבאק־אנד לא זמין — בדקו את הכתובת ונסו שוב."
+        : API_CONFIG_HINT_HE;
+    }
+    return "הכתובת המבוקשת לא נמצאה (404). בדקו שכתובת הבאק־אנד ו־VITE_API_BASE_URL נכונים.";
+  }
+
+  if (error?.request && !error?.response) {
+    return "אין תגובה מהשרת. בדקו חיבור לרשת ושהבאק־אנד פעיל.";
+  }
 
   const fromValue = (value, depth = 0) => {
     if (value == null) return "";

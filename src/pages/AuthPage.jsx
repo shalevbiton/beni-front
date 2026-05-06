@@ -56,7 +56,6 @@ export default function AuthPage() {
         mode === "login" &&
         (
           normalizedLower.includes("invalid") ||
-          normalizedLower.includes("not found") ||
           normalizedLower.includes("given") ||
           normalizedLower.includes("bcrypt") ||
           normalizedLower.includes("jwt") ||
