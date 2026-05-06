@@ -58,10 +58,13 @@ export default function AuthPage() {
     <div className="min-h-screen bg-slate-950 bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 flex items-center justify-center px-4">
       <div className="w-full max-w-md bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl shadow-2xl p-8 animate-fade-in">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-extrabold gradient-text">מערכת רישום לאירועים</h1>
-          <p className="text-slate-400 mt-2 text-sm">
-            מערכת סגורה - נדרש אישור מנהל לפני כניסה
-          </p>
+          <h1 className="text-3xl font-extrabold gradient-text">סנדא אסטרטגית</h1>
+          <img
+            src={`${import.meta.env.BASE_URL}strategic-emblem.png`}
+            alt="סמל סנדא אסטרטגית"
+            className="mx-auto mt-4 h-36 w-auto max-w-[min(250px,100%)] object-contain drop-shadow-md select-none"
+            draggable={false}
+          />
         </div>
 
         <div className="grid grid-cols-2 gap-2 p-1 rounded-xl bg-white/5 border border-white/10 mb-6">
