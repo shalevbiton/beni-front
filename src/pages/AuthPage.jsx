@@ -48,7 +48,25 @@ export default function AuthPage() {
         navigate("/events");
       }
     } catch (err) {
-      setError(stringifyApiError(err, "אירעה שגיאה בהתחברות"));
+      const normalized = stringifyApiError(err, "אירעה שגיאה בהתחברות");
+      const normalizedLower = normalized.toLowerCase();
+
+      // Hide low-level backend/driver text and show a clear login message.
+      if (
+        mode === "login" &&
+        (
+          normalizedLower.includes("invalid") ||
+          normalizedLower.includes("not found") ||
+          normalizedLower.includes("given") ||
+          normalizedLower.includes("bcrypt") ||
+          normalizedLower.includes("jwt") ||
+          normalizedLower.includes("password")
+        )
+      ) {
+        setError("מספר אישי או סיסמה שגויים.");
+      } else {
+        setError(normalized);
+      }
     } finally {
       setLoading(false);
     }
