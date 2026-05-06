@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { authApi } from "../services/api.service";
+import { authApi, stringifyApiError } from "../services/api.service";
 
 export default function AuthPage() {
   const [mode, setMode] = useState("login");
@@ -48,12 +48,7 @@ export default function AuthPage() {
         navigate("/events");
       }
     } catch (err) {
-      const errorMessage =
-        err?.response?.data?.message ||
-        err?.response?.data?.error ||
-        err?.message ||
-        "אירעה שגיאה בהתחברות";
-      setError(String(errorMessage));
+      setError(stringifyApiError(err, "אירעה שגיאה בהתחברות"));
     } finally {
       setLoading(false);
     }

@@ -2,6 +2,42 @@
 import axios from "axios";
 import { API_BASE_URL } from "../config/api";
 
+/** Turn API / axios error payloads into a single human-readable string. */
+export function stringifyApiError(error, fallbackMessage = "An unexpected error occurred") {
+  const data = error?.response?.data;
+
+  const fromValue = (value, depth = 0) => {
+    if (value == null) return "";
+    if (typeof value === "string") return value;
+    if (typeof value === "number" || typeof value === "boolean") return String(value);
+    if (depth > 6) return "";
+    if (Array.isArray(value)) {
+      if (!value.length) return "";
+      if (typeof value[0] === "object" && value[0]?.msg != null)
+        return value.map((item) => fromValue(item, depth + 1)).filter(Boolean).join(", ");
+      return value.map((item) => fromValue(item, depth + 1)).filter(Boolean).join(", ");
+    }
+    if (typeof value !== "object") return String(value);
+    const obj = value;
+    const msg =
+      fromValue(obj.msg, depth + 1) ||
+      fromValue(obj.message, depth + 1) ||
+      fromValue(obj.detail, depth + 1) ||
+      fromValue(obj.description, depth + 1);
+    if (msg) return msg;
+    const errPart = fromValue(obj.error, depth + 1);
+    if (errPart) return errPart;
+    if (Array.isArray(obj.errors))
+      return fromValue(obj.errors, depth + 1);
+    return "";
+  };
+
+  const fromData = fromValue(data);
+  const fallback = typeof error?.message === "string" ? error.message : "";
+  const text = fromData || fallback || fallbackMessage;
+  return typeof text === "string" ? text : String(text);
+}
+
 /**
  * Pre-configured Axios instance.
  * All requests automatically include the correct base URL and headers.
@@ -26,20 +62,7 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    const rawMessage =
-      error.response?.data?.error ??
-      error.response?.data?.message ??
-      error.message ??
-      "An unexpected error occurred";
-
-    const message =
-      typeof rawMessage === "string"
-        ? rawMessage
-        : rawMessage?.message ||
-          rawMessage?.error ||
-          "An unexpected error occurred";
-
-    return Promise.reject(new Error(message));
+    return Promise.reject(new Error(stringifyApiError(error)));
   }
 );
 
