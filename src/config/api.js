@@ -3,13 +3,20 @@
 /**
  * Central API configuration.
  *
- * In development  → Vite proxies /api/* to http://localhost:5000
- *                   (configured in vite.config.js), so we use a relative base.
- * In production   → set VITE_API_BASE_URL in the CI/hosting env to point to
- *                   the deployed backend URL.
+ * Local dev (.env.development): VITE_API_BASE_URL=http://127.0.0.1:5000 → calls backend directly.
+ * Vercel / prod: set VITE_API_BASE_URL in Project → Settings → Environment Variables (then Redeploy).
+ * Use the backend origin only, e.g. https://your-backend.vercel.app — do NOT append /api.
  */
-export const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ?? "";   // "" = relative (proxy)
+
+function normalizeApiOrigin(value) {
+  let v = String(value ?? "").trim();
+  if (!v) return "";
+  v = v.replace(/\/+$/, "");
+  if (/\/api$/i.test(v)) v = v.replace(/\/api$/i, "").replace(/\/+$/, "");
+  return v;
+}
+
+export const API_BASE_URL = normalizeApiOrigin(import.meta.env.VITE_API_BASE_URL);
 
 export const ENDPOINTS = {
   health:        `${API_BASE_URL}/api/health`,

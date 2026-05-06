@@ -3,7 +3,7 @@ import axios from "axios";
 import { API_BASE_URL } from "../config/api";
 
 const API_CONFIG_HINT_HE =
-  "לא נמצא שרת ה־API. אם האתר רץ ב־Vercel, הגדרו במשתני הסביבה של הפרויקט את VITE_API_BASE_URL לכתובת המלאה של הבאק־אנד (ללא /api בסוף), ובצעו deploy מחדש לפרונט.";
+  "לא נמצא שרת ה־API מהפרונט. בפרויקט הפרונט ב־Vercel: Settings → Environment Variables → VITE_API_BASE_URL = כתובת הבאק־אנד (למשל https://YOUR-BACKEND.vercel.app, בלי /api). שמרו ובצעו Redeploy (חובה לאחר שינוי משתנה — משתלב בזמן build).";
 
 /** Turn API / axios error payloads into a single human-readable string. */
 export function stringifyApiError(error, fallbackMessage = "An unexpected error occurred") {
