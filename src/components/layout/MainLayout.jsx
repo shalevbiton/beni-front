@@ -42,11 +42,11 @@ export default function MainLayout() {
           <div className="select-none flex items-center gap-2 shrink-0">
             <img
               src={topRightBadge}
-              alt="סמל סדנה אסטרטגית"
+              alt="סמל סדנא אסטרטגית"
               className="h-10 w-10 md:h-11 md:w-11 object-contain pointer-events-none"
             />
             <span className="text-sm md:text-base font-black tracking-wide bg-gradient-to-r from-cyan-300 via-indigo-300 to-violet-300 bg-clip-text text-transparent drop-shadow-sm whitespace-nowrap">
-              סדנה אסטרטגית
+              סדנא אסטרטגית
             </span>
           </div>
 
