@@ -3,8 +3,8 @@
 /**
  * Central API configuration.
  *
- * Local dev (.env.development): VITE_API_BASE_URL=http://127.0.0.1:5000 → calls backend directly.
- * Vercel / prod: set VITE_API_BASE_URL in Project → Settings → Environment Variables (then Redeploy).
+ * Local dev: calls localhost backend directly.
+ * Vercel / prod: forces the deployed backend origin.
  * Use the backend origin only, e.g. https://your-backend.vercel.app — do NOT append /api.
  */
 
@@ -16,7 +16,10 @@ function normalizeApiOrigin(value) {
   return v;
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+const isProd = import.meta.env.PROD;
+const API_BASE_URL = isProd
+  ? "https://beni-back.vercel.app"
+  : "http://localhost:5000";
 export const API_BASE_URL_ORIGIN = normalizeApiOrigin(API_BASE_URL);
 
 export const ENDPOINTS = {
