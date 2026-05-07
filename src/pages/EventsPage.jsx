@@ -643,7 +643,7 @@ export default function EventsPage() {
                     {pendingUsers.length} ממתינים
                   </span>
                 </div>
-                <div className="w-full overflow-x-auto">
+                <div className="w-full overflow-x-auto overscroll-x-contain [webkit-overflow-scrolling:touch]">
                   <table className="w-full min-w-[600px] text-right">
                     <thead><tr className="text-slate-400 text-sm border-b border-white/5"><th className="p-4 font-black">שם</th><th className="p-4 font-black">מספר אישי</th><th className="p-4 font-black">סטטוס</th><th className="p-4 font-black">תפקיד</th><th className="p-4 font-black">פעולות</th></tr></thead>
                     <tbody>{pendingUsers.map(u => (
@@ -653,7 +653,8 @@ export default function EventsPage() {
                         <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${String(u.role || "").toUpperCase() === "ADMIN" ? "bg-violet-500/20 text-violet-300" : "bg-slate-500/20 text-slate-300"}`}>
                           {String(u.role || "").toUpperCase() === "ADMIN" ? "ADMIN" : "USER"}
                         </span>
-                      </td><td className="p-4 flex gap-2">
+                      </td><td className="p-4">
+                        <div className="flex gap-2 whitespace-nowrap">
                         {String(u.role || "").toUpperCase() !== "ADMIN" && (
                           <button onClick={() => handleMakeAdmin(u.id, u.name)} className="p-2 bg-violet-500/10 text-violet-300 rounded-lg hover:bg-violet-500/20 border border-violet-500/20">
                             <ShieldCheck size={18} />
@@ -662,6 +663,7 @@ export default function EventsPage() {
                         <button onClick={() => handleUpdateUserStatus(u.id, 'APPROVED')} className="p-2 bg-emerald-500/10 text-emerald-400 rounded-lg hover:bg-emerald-500/20 border border-emerald-500/20"><UserCheck size={18} /></button>
                         <button onClick={() => handleUpdateUserStatus(u.id, 'REJECTED')} className="p-2 bg-rose-500/10 text-rose-400 rounded-lg hover:bg-rose-500/20 border border-rose-500/20"><UserX size={18} /></button>
                         <button onClick={() => handleDeleteUser(u.id, u.name)} className="p-2 bg-red-500/10 text-red-300 rounded-lg hover:bg-red-500/20 border border-red-500/20"><Trash2 size={18} /></button>
+                        </div>
                       </td></tr>
                     ))}
                     {pendingUsers.length === 0 && (
@@ -681,7 +683,7 @@ export default function EventsPage() {
                     {approvedUsers.length} מאושרים
                   </span>
                 </div>
-                <div className="w-full overflow-x-auto">
+                <div className="w-full overflow-x-auto overscroll-x-contain [webkit-overflow-scrolling:touch]">
                   <table className="w-full min-w-[600px] text-right">
                     <thead><tr className="text-slate-400 text-sm border-b border-white/5"><th className="p-4 font-black">שם</th><th className="p-4 font-black">מספר אישי</th><th className="p-4 font-black">סטטוס</th><th className="p-4 font-black">תפקיד</th><th className="p-4 font-black">פעולות</th></tr></thead>
                     <tbody>{approvedUsers.map(u => (
@@ -691,7 +693,8 @@ export default function EventsPage() {
                         <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${String(u.role || "").toUpperCase() === "ADMIN" ? "bg-violet-500/20 text-violet-300" : "bg-slate-500/20 text-slate-300"}`}>
                           {String(u.role || "").toUpperCase() === "ADMIN" ? "ADMIN" : "USER"}
                         </span>
-                      </td><td className="p-4 flex gap-2">
+                      </td><td className="p-4">
+                        <div className="flex gap-2 whitespace-nowrap">
                         {String(u.role || "").toUpperCase() !== "ADMIN" && (
                           <button onClick={() => handleMakeAdmin(u.id, u.name)} className="p-2 bg-violet-500/10 text-violet-300 rounded-lg hover:bg-violet-500/20 border border-violet-500/20">
                             <ShieldCheck size={18} />
@@ -699,6 +702,7 @@ export default function EventsPage() {
                         )}
                         <button onClick={() => handleUpdateUserStatus(u.id, 'REJECTED')} className="p-2 bg-rose-500/10 text-rose-400 rounded-lg hover:bg-rose-500/20 border border-rose-500/20"><UserX size={18} /></button>
                         <button onClick={() => handleDeleteUser(u.id, u.name)} className="p-2 bg-red-500/10 text-red-300 rounded-lg hover:bg-red-500/20 border border-red-500/20"><Trash2 size={18} /></button>
+                        </div>
                       </td></tr>
                     ))}
                     {approvedUsers.length === 0 && (

@@ -38,7 +38,7 @@ export default function MainLayout() {
     <div className="flex flex-col min-h-screen" dir="rtl">
       {/* ── Navbar ───────────────────────────────────────────────────────── */}
       <header className="sticky top-0 z-50 glass border-b border-white/5">
-        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-14 py-2 flex items-center justify-between gap-4">
+        <nav className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 min-h-14 py-2 flex flex-col md:flex-row md:items-center md:justify-between gap-2 md:gap-4">
           <div className="select-none flex items-center gap-2 shrink-0">
             <img
               src={topRightBadge}
@@ -51,10 +51,10 @@ export default function MainLayout() {
           </div>
 
           {/* Action Button */}
-          <div className="flex items-center gap-2 flex-wrap md:flex-nowrap overflow-x-auto overflow-y-hidden">
+          <div className="w-full md:w-auto flex items-center gap-2 overflow-x-auto overflow-y-hidden whitespace-nowrap pb-1 md:pb-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <button
               onClick={() => navigate("/events?view=board")}
-              className={`px-3 py-1.5 bg-white/5 hover:bg-white/10 text-white text-sm font-medium rounded-lg border border-white/10 transition-colors ${
+              className={`shrink-0 px-3 py-1.5 bg-white/5 hover:bg-white/10 text-white text-sm font-medium rounded-lg border border-white/10 transition-colors ${
                 currentView === "board" ? "bg-white/20 border-white/30" : ""
               }`}
             >
@@ -68,14 +68,14 @@ export default function MainLayout() {
               <>
                 <button
                   onClick={() => setIsModalOpen(true)}
-                  className="btn-primary flex items-center gap-2 px-3 py-1.5 text-sm"
+                  className="btn-primary shrink-0 flex items-center gap-2 px-3 py-1.5 text-sm"
                 >
                   <Plus className="w-4 h-4" />
                   <span>הוספת אירוע</span>
                 </button>
                 <button
                   onClick={() => navigate("/events?view=stats")}
-                  className={`px-3 py-1.5 bg-white/5 hover:bg-white/10 text-white text-sm font-medium rounded-lg border border-white/10 transition-colors ${
+                  className={`shrink-0 px-3 py-1.5 bg-white/5 hover:bg-white/10 text-white text-sm font-medium rounded-lg border border-white/10 transition-colors ${
                     currentView === "stats" ? "bg-white/20 border-white/30" : ""
                   }`}
                 >
@@ -83,7 +83,7 @@ export default function MainLayout() {
                 </button>
                 <button
                   onClick={() => navigate("/events?view=approvals")}
-                  className={`px-3 py-1.5 bg-white/5 hover:bg-white/10 text-white text-sm font-medium rounded-lg border border-white/10 transition-colors ${
+                  className={`shrink-0 px-3 py-1.5 bg-white/5 hover:bg-white/10 text-white text-sm font-medium rounded-lg border border-white/10 transition-colors ${
                     currentView === "approvals" ? "bg-white/20 border-white/30" : ""
                   }`}
                 >
@@ -97,7 +97,7 @@ export default function MainLayout() {
                 localStorage.removeItem("user");
                 window.location.href = "/";
               }}
-              className="text-slate-400 hover:text-rose-400 text-sm font-medium transition-colors"
+              className="shrink-0 text-slate-400 hover:text-rose-400 text-sm font-medium transition-colors px-1"
             >
               התנתקות
             </button>
@@ -106,7 +106,7 @@ export default function MainLayout() {
       </header>
 
       {/* ── Main Content ─────────────────────────────────────────────────── */}
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 animate-fade-in">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-2 sm:px-6 lg:px-8 py-5 sm:py-6 animate-fade-in">
         <Outlet />
       </main>
 
