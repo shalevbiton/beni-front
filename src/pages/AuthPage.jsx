@@ -75,7 +75,7 @@ export default function AuthPage() {
     <div className="min-h-screen bg-slate-950 bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 flex items-center justify-center px-4">
       <div className="w-full max-w-md bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl shadow-2xl p-8 animate-fade-in">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-extrabold gradient-text">סדנא אסטרטגית</h1>
+          <h1 className="text-3xl font-extrabold gradient-text">סדנא אסטרטגית 7-8.7.2026</h1>
           <img
             src={`${import.meta.env.BASE_URL}strategic-emblem.png`}
             alt="סמל סדנא אסטרטגית"
