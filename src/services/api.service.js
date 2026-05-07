@@ -1,9 +1,8 @@
 // frontend/src/services/api.service.js
-import axios from "axios";
+import apiClient from "../api";
 
 const API_CONFIG_HINT_HE =
   "לא נמצא שרת ה־API מהפרונט. בפרויקט הפרונט ב־Vercel: Settings → Environment Variables → VITE_API_BASE_URL = כתובת הבאק־אנד (למשל https://YOUR-BACKEND.vercel.app, בלי /api). שמרו ובצעו Redeploy (חובה לאחר שינוי משתנה — משתלב בזמן build).";
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
 /** Turn API / axios error payloads into a single human-readable string. */
 export function stringifyApiError(error, fallbackMessage = "An unexpected error occurred") {
@@ -63,16 +62,6 @@ export function stringifyApiError(error, fallbackMessage = "An unexpected error 
   const text = fromData || fallback || fallbackMessage;
   return typeof text === "string" ? text : String(text);
 }
-
-/**
- * Pre-configured Axios instance.
- * All requests automatically include the correct base URL and headers.
- */
-const apiClient = axios.create({
-  baseURL: API_BASE_URL,
-  headers: { "Content-Type": "application/json" },
-  timeout: 10_000,
-});
 
 // ── Request interceptor (attach auth token if present) ────────────────────────
 apiClient.interceptors.request.use(

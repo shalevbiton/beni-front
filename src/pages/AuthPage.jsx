@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { authApi, stringifyApiError } from "../services/api.service";
+import { authApi } from "../services/api.service";
 
 export default function AuthPage() {
   const [mode, setMode] = useState("login");
@@ -48,8 +48,8 @@ export default function AuthPage() {
         navigate("/events");
       }
     } catch (err) {
-      const normalized = stringifyApiError(err, "אירעה שגיאה בהתחברות");
-      const normalizedLower = normalized.toLowerCase();
+      const errorMessage = err.response?.data?.message || err.message || "אירעה שגיאה";
+      const normalizedLower = String(errorMessage).toLowerCase();
 
       // Hide low-level backend/driver text and show a clear login message.
       if (
@@ -64,7 +64,7 @@ export default function AuthPage() {
       ) {
         setError("מספר אישי או סיסמה שגויים.");
       } else {
-        setError(normalized);
+        setError(errorMessage);
       }
     } finally {
       setLoading(false);
