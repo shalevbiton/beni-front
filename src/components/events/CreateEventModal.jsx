@@ -22,6 +22,15 @@ export default function CreateEventModal({ isOpen, onClose, onEventCreated, init
     "צוות מצ\"ח 2035"
   ];
 
+  const locationOptions = [
+    "כיתה 1",
+    "כיתה 2",
+    "כיתה 3",
+    "כיתה 4",
+    "כיתה 5",
+    "כיתה 6",
+  ];
+
   // Auto-fill when opened or when editEvent changes
   useEffect(() => {
     if (editEvent) {
@@ -112,7 +121,18 @@ export default function CreateEventModal({ isOpen, onClose, onEventCreated, init
             <label className="text-sm font-semibold text-slate-300 flex items-center gap-2">
               <MapPin className="w-4 h-4 text-brand-400" /> מיקום
             </label>
-            <input name="location" value={form.location} onChange={onChange} required placeholder="מיקום" className="input-glass w-full py-3.5" />
+            <select
+              name="location"
+              value={form.location}
+              onChange={onChange}
+              required
+              className="input-glass w-full py-3.5 bg-slate-900"
+            >
+              <option value="" disabled>בחר כיתה...</option>
+              {locationOptions.map((loc) => (
+                <option key={loc} value={loc}>{loc}</option>
+              ))}
+            </select>
           </div>
           
           <div className="space-y-1.5">

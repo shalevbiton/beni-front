@@ -22,10 +22,10 @@ import CreateEventModal from "../components/events/CreateEventModal";
 
 // --- CONSTANTS ---
 const SLOTS = [
-  { id: "session1", label: "מושב 1", description: "סשן מקצועי ראשון - פתיחת היום" },
-  { id: "session2", label: "מושב 2", description: "סשן מקצועי שני - לפני הצהריים" },
-  { id: "session3", label: "מושב 3", description: "סשן מקצועי שלישי - אחרי הצהריים" },
-  { id: "session4", label: "מושב 4", description: "סשן מקצועי רביעי - סיום היום" },
+  { id: "session1", label: "מושב 1", date: "7.7.26", description: "סשן מקצועי ראשון - פתיחת היום" },
+  { id: "session2", label: "מושב 2", date: "7.7.26", description: "סשן מקצועי שני - לפני הצהריים" },
+  { id: "session3", label: "מושב 3", date: "7.7.26", description: "סשן מקצועי שלישי - אחרי הצהריים" },
+  { id: "session4", label: "מושב 4", date: "8.7.2026", description: "סשן מקצועי רביעי - סיום היום" },
 ];
 
 // --- COMPONENTS ---
@@ -74,6 +74,7 @@ function RegistrationModal({ isOpen, event, onClose, onRegistered }) {
 }
 
 function EditEventModal({ editingEvent, setEditingEvent, handleUpdateEvent }) {
+  const locationOptions = ["כיתה 1", "כיתה 2", "כיתה 3", "כיתה 4", "כיתה 5", "כיתה 6"];
   const [form, setForm] = useState({
     title: "",
     location: "",
@@ -139,13 +140,17 @@ function EditEventModal({ editingEvent, setEditingEvent, handleUpdateEvent }) {
             onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))}
             required
           />
-          <input
-            className="input-glass"
-            placeholder="מיקום"
+          <select
+            className="input-glass bg-slate-900"
             value={form.location}
             onChange={(e) => setForm((prev) => ({ ...prev, location: e.target.value }))}
             required
-          />
+          >
+            <option value="" disabled>בחר כיתה...</option>
+            {locationOptions.map((loc) => (
+              <option key={loc} value={loc}>{loc}</option>
+            ))}
+          </select>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               className="input-glass"
@@ -182,6 +187,49 @@ function EditEventModal({ editingEvent, setEditingEvent, handleUpdateEvent }) {
           </div>
         </form>
       </motion.div>
+    </div>
+  );
+}
+
+function EventRegistrationsModal({ isOpen, eventTitle, loading, registrations, onClose }) {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-[130] flex items-center justify-center p-3 bg-slate-950/80 backdrop-blur-md" dir="rtl">
+      <div className="w-[95%] max-w-xl md:max-w-2xl mx-auto max-h-[90vh] overflow-y-auto bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5 md:p-6">
+        <div className="flex items-center justify-between gap-3 mb-4">
+          <h3 className="text-xl font-black text-white">נרשמים לאירוע: {eventTitle}</h3>
+          <button
+            onClick={onClose}
+            className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white text-sm border border-white/10"
+          >
+            סגור
+          </button>
+        </div>
+
+        {loading ? (
+          <div className="flex items-center gap-2 text-slate-300 py-4">
+            <Loader2 className="w-4 h-4 animate-spin" />
+            <span>טוען נרשמים...</span>
+          </div>
+        ) : registrations.length === 0 ? (
+          <p className="text-slate-400 py-4">אין כרגע נרשמים לאירוע זה.</p>
+        ) : (
+          <div className="space-y-2">
+            {registrations.map((reg) => (
+              <div
+                key={reg.id}
+                className="p-3 rounded-xl bg-slate-900/40 border border-white/10 flex items-center justify-between gap-3"
+              >
+                <div>
+                  <p className="text-white font-semibold">{reg.name}</p>
+                </div>
+                <span className="text-xs text-slate-400">{reg.status || "APPROVED"}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -288,6 +336,10 @@ export default function EventsPage() {
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
   const [isRegModalOpen, setIsRegModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [selectedStatsEvent, setSelectedStatsEvent] = useState(null);
+  const [eventRegsModalOpen, setEventRegsModalOpen] = useState(false);
+  const [eventRegsLoading, setEventRegsLoading] = useState(false);
+  const [eventRegistrations, setEventRegistrations] = useState([]);
   const [selectedSlot, setSelectedSlot] = useState("");
   const [editingEvent, setEditingEvent] = useState(null);
 
@@ -429,6 +481,42 @@ export default function EventsPage() {
     }
   };
 
+  const openEventRegistrations = async (event) => {
+    setSelectedStatsEvent(event);
+    setEventRegsModalOpen(true);
+    setEventRegsLoading(true);
+    try {
+      const regs = await registrationsApi.getByEvent(event.id);
+      const usersById = (users || []).reduce((acc, u) => {
+        if (u?.id) acc[u.id] = u;
+        return acc;
+      }, {});
+      const normalized = (regs || []).map((r) => ({
+        id: r.id ?? `${event.id}-${r.userId ?? r.User?.id ?? Math.random()}`,
+        name:
+          r.User?.name ||
+          r.user?.name ||
+          r.name ||
+          usersById[r.userId]?.name ||
+          "משתמש",
+        personalNumber:
+          r.User?.personalNumber ||
+          r.user?.personalNumber ||
+          r.personalNumber ||
+          usersById[r.userId]?.email ||
+          "",
+        email: r.User?.email || r.user?.email || r.email || "",
+        status: r.status || "",
+      }));
+      setEventRegistrations(normalized);
+    } catch (err) {
+      alert(err.message || "שגיאה בטעינת הנרשמים");
+      setEventRegistrations([]);
+    } finally {
+      setEventRegsLoading(false);
+    }
+  };
+
   const eventById = new Map(events.map((e) => [e.id, e]));
   const registeredEventIds = new Set(myRegistrations.map((r) => r.eventId));
   const registeredSlots = new Set(
@@ -484,7 +572,10 @@ export default function EventsPage() {
                   return (
                     <motion.div key={slot.id} layoutId={`session-${slot.id}`} onClick={() => setActiveSession(slot.id)} className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5 flex flex-col gap-4 cursor-pointer group hover:bg-white/[0.08] hover:border-brand-500/50 transition-all relative">
                       <div className="w-12 h-12 rounded-2xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center"><Calendar className="w-6 h-6 text-brand-400" /></div>
-                      <div><h2 className="text-2xl font-black text-white">{slot.label}</h2></div>
+                      <div>
+                        <h2 className="text-2xl font-black text-white">{slot.label}</h2>
+                        <p className="text-sm text-brand-300/90 font-semibold mt-1">{slot.date}</p>
+                      </div>
                       <div className="pt-4 flex justify-between items-center border-t border-white/5"><span className="text-xs font-bold text-brand-400">{slotEvents.length} אירועים</span><ArrowRight className="w-4 h-4 text-brand-400" /></div>
                     </motion.div>
                   );
@@ -612,7 +703,12 @@ export default function EventsPage() {
                 {eventStats.map((event, idx) => {
                   const widthPercent = Math.round((event.registrations / maxEventRegistrations) * 100);
                   return (
-                    <div key={event.id} className="bg-slate-900/30 border border-white/5 rounded-xl p-3">
+                    <button
+                      key={event.id}
+                      type="button"
+                      onClick={() => openEventRegistrations(event)}
+                      className="w-full text-right bg-slate-900/30 border border-white/5 rounded-xl p-3 hover:border-brand-400/40 hover:bg-slate-900/50 transition-colors"
+                    >
                       <div className="flex justify-between text-sm mb-2">
                         <span className="text-slate-100 font-semibold">
                           {idx + 1}. {event.title}
@@ -625,7 +721,7 @@ export default function EventsPage() {
                           style={{ width: `${widthPercent}%` }}
                         />
                       </div>
-                    </div>
+                    </button>
                   );
                 })}
               </div>
@@ -739,6 +835,13 @@ export default function EventsPage() {
         handleUpdateEvent={handleUpdateEvent}
       />
       <RegistrationModal isOpen={isRegModalOpen} event={selectedEvent} onClose={() => setIsRegModalOpen(false)} onRegistered={fetchData} />
+      <EventRegistrationsModal
+        isOpen={eventRegsModalOpen}
+        eventTitle={selectedStatsEvent?.title || ""}
+        loading={eventRegsLoading}
+        registrations={eventRegistrations}
+        onClose={() => setEventRegsModalOpen(false)}
+      />
     </div>
   );
 }
