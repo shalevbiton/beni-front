@@ -1,9 +1,9 @@
 // frontend/src/services/api.service.js
 import axios from "axios";
-import { API_BASE_URL } from "../config/api";
 
 const API_CONFIG_HINT_HE =
   "לא נמצא שרת ה־API מהפרונט. בפרויקט הפרונט ב־Vercel: Settings → Environment Variables → VITE_API_BASE_URL = כתובת הבאק־אנד (למשל https://YOUR-BACKEND.vercel.app, בלי /api). שמרו ובצעו Redeploy (חובה לאחר שינוי משתנה — משתלב בזמן build).";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
 /** Turn API / axios error payloads into a single human-readable string. */
 export function stringifyApiError(error, fallbackMessage = "An unexpected error occurred") {
@@ -69,7 +69,7 @@ export function stringifyApiError(error, fallbackMessage = "An unexpected error 
  * All requests automatically include the correct base URL and headers.
  */
 const apiClient = axios.create({
-  baseURL: `${API_BASE_URL}/api`,
+  baseURL: API_BASE_URL,
   headers: { "Content-Type": "application/json" },
   timeout: 10_000,
 });
@@ -94,38 +94,38 @@ apiClient.interceptors.response.use(
 
 // ── Events ────────────────────────────────────────────────────────────────────
 export const eventsApi = {
-  getAll:  ()       => apiClient.get("/events").then((r) => r.data.data),
-  getById: (id)     => apiClient.get(`/events/${id}`).then((r) => r.data.data),
-  create:  (body)   => apiClient.post("/events", body).then((r) => r.data.data),
-  update:  (id, b)  => apiClient.patch(`/events/${id}`, b).then((r) => r.data.data),
-  remove:  (id)     => apiClient.delete(`/events/${id}`),
+  getAll:  ()       => apiClient.get("/api/events").then((r) => r.data.data),
+  getById: (id)     => apiClient.get(`/api/events/${id}`).then((r) => r.data.data),
+  create:  (body)   => apiClient.post("/api/events", body).then((r) => r.data.data),
+  update:  (id, b)  => apiClient.patch(`/api/events/${id}`, b).then((r) => r.data.data),
+  remove:  (id)     => apiClient.delete(`/api/events/${id}`),
 };
 
 // ── Registrations ─────────────────────────────────────────────────────────────
 export const registrationsApi = {
-  register:       (body)    => apiClient.post("/registrations", body).then((r) => r.data.data),
-  getMine:        ()        => apiClient.get("/registrations").then((r) => r.data.data),
-  getByEvent:     (eventId) => apiClient.get(`/registrations/event/${eventId}`).then((r) => r.data.data),
-  cancel:         (id)      => apiClient.delete(`/registrations/${id}`),
+  register:       (body)    => apiClient.post("/api/registrations", body).then((r) => r.data.data),
+  getMine:        ()        => apiClient.get("/api/registrations").then((r) => r.data.data),
+  getByEvent:     (eventId) => apiClient.get(`/api/registrations/event/${eventId}`).then((r) => r.data.data),
+  cancel:         (id)      => apiClient.delete(`/api/registrations/${id}`),
 };
 
 // ── Authentication ─────────────────────────────────────────────────────────────
 export const authApi = {
-  register: (body) => apiClient.post("/auth/register", body).then((r) => r.data),
-  login: (body) => apiClient.post("/auth/login", body).then((r) => r.data),
+  register: (body) => apiClient.post("/api/auth/register", body).then((r) => r.data),
+  login: (body) => apiClient.post("/api/auth/login", body).then((r) => r.data),
 };
 
 // ── Users (Admin) ─────────────────────────────────────────────────────────────
 export const usersApi = {
-  getAll: () => apiClient.get("/admin/users").then((r) => r.data.data),
-  updateStatus: (id, status) => apiClient.patch(`/admin/users/${id}/status`, { status }).then((r) => r.data.data),
-  updateRole: (id, role) => apiClient.patch(`/admin/users/${id}/role`, { role }).then((r) => r.data.data),
-  remove: (id) => apiClient.delete(`/admin/users/${id}`),
+  getAll: () => apiClient.get("/api/admin/users").then((r) => r.data.data),
+  updateStatus: (id, status) => apiClient.patch(`/api/admin/users/${id}/status`, { status }).then((r) => r.data.data),
+  updateRole: (id, role) => apiClient.patch(`/api/admin/users/${id}/role`, { role }).then((r) => r.data.data),
+  remove: (id) => apiClient.delete(`/api/admin/users/${id}`),
 };
 
 // ── Admin Stats ────────────────────────────────────────────────────────────────
 export const statsApi = {
-  getSlots: () => apiClient.get("/admin/stats/slots").then((r) => r.data.data),
+  getSlots: () => apiClient.get("/api/admin/stats/slots").then((r) => r.data.data),
 };
 
 export default apiClient;

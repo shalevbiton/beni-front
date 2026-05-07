@@ -16,12 +16,13 @@ function normalizeApiOrigin(value) {
   return v;
 }
 
-export const API_BASE_URL = normalizeApiOrigin(import.meta.env.VITE_API_BASE_URL);
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+export const API_BASE_URL_ORIGIN = normalizeApiOrigin(API_BASE_URL);
 
 export const ENDPOINTS = {
-  health:        `${API_BASE_URL}/api/health`,
-  events:        `${API_BASE_URL}/api/events`,
-  event:         (id) => `${API_BASE_URL}/api/events/${id}`,
-  registrations: `${API_BASE_URL}/api/registrations`,
-  eventRegs:     (eventId) => `${API_BASE_URL}/api/registrations/event/${eventId}`,
+  health:        `${API_BASE_URL_ORIGIN}/api/health`,
+  events:        `${API_BASE_URL_ORIGIN}/api/events`,
+  event:         (id) => `${API_BASE_URL_ORIGIN}/api/events/${id}`,
+  registrations: `${API_BASE_URL_ORIGIN}/api/registrations`,
+  eventRegs:     (eventId) => `${API_BASE_URL_ORIGIN}/api/registrations/event/${eventId}`,
 };
