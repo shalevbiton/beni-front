@@ -643,17 +643,17 @@ export default function EventsPage() {
                     {pendingUsers.length} ממתינים
                   </span>
                 </div>
-                <div className="w-full overflow-x-auto overscroll-x-contain [webkit-overflow-scrolling:touch]">
+                <div className="w-full overflow-x-auto block overscroll-x-contain [webkit-overflow-scrolling:touch]">
                   <table className="w-full min-w-[600px] text-right">
-                    <thead><tr className="text-slate-400 text-sm border-b border-white/5"><th className="p-4 font-black">שם</th><th className="p-4 font-black">מספר אישי</th><th className="p-4 font-black">סטטוס</th><th className="p-4 font-black">תפקיד</th><th className="p-4 font-black">פעולות</th></tr></thead>
+                    <thead><tr className="text-slate-400 text-sm border-b border-white/5"><th className="p-4 font-black whitespace-nowrap">שם</th><th className="p-4 font-black whitespace-nowrap">מספר אישי</th><th className="p-4 font-black whitespace-nowrap">סטטוס</th><th className="p-4 font-black whitespace-nowrap">תפקיד</th><th className="p-4 font-black whitespace-nowrap">פעולות</th></tr></thead>
                     <tbody>{pendingUsers.map(u => (
-                      <tr key={u.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-all"><td className="p-4 text-white font-bold">{u.name}</td><td className="p-4 text-slate-300">{u.email || "—"}</td><td className="p-4">
+                      <tr key={u.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-all"><td className="p-4 text-white font-bold whitespace-nowrap">{u.name}</td><td className="p-4 text-slate-300 whitespace-nowrap">{u.email || "—"}</td><td className="p-4 whitespace-nowrap">
                         <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-amber-500/20 text-amber-400">PENDING</span>
-                      </td><td className="p-4">
+                      </td><td className="p-4 whitespace-nowrap">
                         <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${String(u.role || "").toUpperCase() === "ADMIN" ? "bg-violet-500/20 text-violet-300" : "bg-slate-500/20 text-slate-300"}`}>
                           {String(u.role || "").toUpperCase() === "ADMIN" ? "ADMIN" : "USER"}
                         </span>
-                      </td><td className="p-4">
+                      </td><td className="p-4 whitespace-nowrap">
                         <div className="flex gap-2 whitespace-nowrap">
                         {String(u.role || "").toUpperCase() !== "ADMIN" && (
                           <button onClick={() => handleMakeAdmin(u.id, u.name)} className="p-2 bg-violet-500/10 text-violet-300 rounded-lg hover:bg-violet-500/20 border border-violet-500/20">
@@ -668,7 +668,7 @@ export default function EventsPage() {
                     ))}
                     {pendingUsers.length === 0 && (
                       <tr>
-                        <td colSpan={5} className="p-6 text-center text-slate-400">אין כרגע בקשות שממתינות לאישור</td>
+                        <td colSpan={5} className="p-6 text-center text-slate-400 whitespace-nowrap">אין כרגע בקשות שממתינות לאישור</td>
                       </tr>
                     )}
                     </tbody>
@@ -683,17 +683,17 @@ export default function EventsPage() {
                     {approvedUsers.length} מאושרים
                   </span>
                 </div>
-                <div className="w-full overflow-x-auto overscroll-x-contain [webkit-overflow-scrolling:touch]">
+                <div className="w-full overflow-x-auto block overscroll-x-contain [webkit-overflow-scrolling:touch]">
                   <table className="w-full min-w-[600px] text-right">
-                    <thead><tr className="text-slate-400 text-sm border-b border-white/5"><th className="p-4 font-black">שם</th><th className="p-4 font-black">מספר אישי</th><th className="p-4 font-black">סטטוס</th><th className="p-4 font-black">תפקיד</th><th className="p-4 font-black">פעולות</th></tr></thead>
+                    <thead><tr className="text-slate-400 text-sm border-b border-white/5"><th className="p-4 font-black whitespace-nowrap">שם</th><th className="p-4 font-black whitespace-nowrap">מספר אישי</th><th className="p-4 font-black whitespace-nowrap">סטטוס</th><th className="p-4 font-black whitespace-nowrap">תפקיד</th><th className="p-4 font-black whitespace-nowrap">פעולות</th></tr></thead>
                     <tbody>{approvedUsers.map(u => (
-                      <tr key={u.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-all"><td className="p-4 text-white font-bold">{u.name}</td><td className="p-4 text-slate-300">{u.email || "—"}</td><td className="p-4">
+                      <tr key={u.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-all"><td className="p-4 text-white font-bold whitespace-nowrap">{u.name}</td><td className="p-4 text-slate-300 whitespace-nowrap">{u.email || "—"}</td><td className="p-4 whitespace-nowrap">
                         <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-emerald-500/20 text-emerald-400">APPROVED</span>
-                      </td><td className="p-4">
+                      </td><td className="p-4 whitespace-nowrap">
                         <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${String(u.role || "").toUpperCase() === "ADMIN" ? "bg-violet-500/20 text-violet-300" : "bg-slate-500/20 text-slate-300"}`}>
                           {String(u.role || "").toUpperCase() === "ADMIN" ? "ADMIN" : "USER"}
                         </span>
-                      </td><td className="p-4">
+                      </td><td className="p-4 whitespace-nowrap">
                         <div className="flex gap-2 whitespace-nowrap">
                         {String(u.role || "").toUpperCase() !== "ADMIN" && (
                           <button onClick={() => handleMakeAdmin(u.id, u.name)} className="p-2 bg-violet-500/10 text-violet-300 rounded-lg hover:bg-violet-500/20 border border-violet-500/20">
@@ -707,7 +707,7 @@ export default function EventsPage() {
                     ))}
                     {approvedUsers.length === 0 && (
                       <tr>
-                        <td colSpan={5} className="p-6 text-center text-slate-400">אין משתמשים מאושרים כרגע</td>
+                        <td colSpan={5} className="p-6 text-center text-slate-400 whitespace-nowrap">אין משתמשים מאושרים כרגע</td>
                       </tr>
                     )}
                     </tbody>

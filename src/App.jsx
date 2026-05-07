@@ -24,37 +24,39 @@ export default function App() {
   };
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<AuthPage />} />
-        <Route element={<MainLayout />}>
-          <Route
-            path="events"
-            element={
-              <RequireAuth>
-                <EventsPage />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="events/:id"
-            element={
-              <RequireAuth>
-                <EventDetailPage />
-              </RequireAuth>
-            }
-          />
-          <Route
-            path="schedule"
-            element={
-              <RequireAuth>
-                <EventSelectorPage />
-              </RequireAuth>
-            }
-          />
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <div className="w-full overflow-x-hidden">
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<AuthPage />} />
+          <Route element={<MainLayout />}>
+            <Route
+              path="events"
+              element={
+                <RequireAuth>
+                  <EventsPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="events/:id"
+              element={
+                <RequireAuth>
+                  <EventDetailPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="schedule"
+              element={
+                <RequireAuth>
+                  <EventSelectorPage />
+                </RequireAuth>
+              }
+            />
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </div>
   );
 }
