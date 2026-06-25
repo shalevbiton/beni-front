@@ -22,10 +22,10 @@ import CreateEventModal from "../components/events/CreateEventModal";
 
 // --- CONSTANTS ---
 const SLOTS = [
-  { id: "session1", label: "מושב 1", date: "7.7.26", description: "סשן מקצועי ראשון - פתיחת היום" },
-  { id: "session2", label: "מושב 2", date: "7.7.26", description: "סשן מקצועי שני - לפני הצהריים" },
-  { id: "session3", label: "מושב 3", date: "7.7.26", description: "סשן מקצועי שלישי - אחרי הצהריים" },
-  { id: "session4", label: "מושב 4", date: "8.7.2026", description: "סשן מקצועי רביעי - סיום היום" },
+  { id: "session1", label: "מושב 1", date: "4.8.26", description: "סשן מקצועי ראשון - פתיחת היום" },
+  { id: "session2", label: "מושב 2", date: "4.8.26", description: "סשן מקצועי שני - לפני הצהריים" },
+  { id: "session3", label: "מושב 3", date: "4.8.26", description: "סשן מקצועי שלישי - אחרי הצהריים" },
+  { id: "session4", label: "מושב 4", date: "5.8.2026", description: "סשן מקצועי רביעי - סיום היום" },
 ];
 
 // --- COMPONENTS ---
