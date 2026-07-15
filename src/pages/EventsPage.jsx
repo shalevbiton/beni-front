@@ -16,9 +16,11 @@ import {
   UserX,
   BarChart3,
   TrendingUp,
+  Download,
 } from "lucide-react";
 import { eventsApi, usersApi, registrationsApi } from "../services/api.service";
 import CreateEventModal from "../components/events/CreateEventModal";
+import { exportToCSV } from "../utils/csvExport";
 
 // --- CONSTANTS ---
 const SLOTS = [
@@ -191,20 +193,50 @@ function EditEventModal({ editingEvent, setEditingEvent, handleUpdateEvent }) {
   );
 }
 
-function EventRegistrationsModal({ isOpen, eventTitle, loading, registrations, onClose }) {
+function EventRegistrationsModal({ isOpen, event, loading, registrations, onClose }) {
   if (!isOpen) return null;
+
+  const eventTitle = event?.title || "";
+
+  const handleDownloadCSV = () => {
+    const headers = ["שם הנרשם", "מספר אישי", "אימייל", "מועד המצגת", "תאריך המצגת", "שם המצגת", "מיקום", "צוות מוביל", "סטטוס הרשמה"];
+    const slotObj = SLOTS.find(s => s.id === event?.slot);
+    const rows = (registrations || []).map((reg) => [
+      reg.name || "",
+      reg.personalNumber || "",
+      reg.email || "",
+      slotObj?.label || event?.slot || "",
+      slotObj?.date || "",
+      event?.title || "",
+      event?.location || "",
+      event?.leadingTeam || "",
+      reg.status || "CONFIRMED",
+    ]);
+    exportToCSV(headers, rows, "registrations_report.csv");
+  };
 
   return (
     <div className="fixed inset-0 z-[130] flex items-center justify-center p-3 bg-slate-950/80 backdrop-blur-md" dir="rtl">
       <div className="w-[95%] max-w-xl md:max-w-2xl mx-auto max-h-[90vh] overflow-y-auto bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5 md:p-6">
         <div className="flex items-center justify-between gap-3 mb-4">
           <h3 className="text-xl font-black text-white">נרשמים לאירוע: {eventTitle}</h3>
-          <button
-            onClick={onClose}
-            className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white text-sm border border-white/10"
-          >
-            סגור
-          </button>
+          <div className="flex gap-2">
+            {!loading && registrations && registrations.length > 0 && (
+              <button
+                onClick={handleDownloadCSV}
+                className="px-3 py-1.5 rounded-lg bg-brand-500/20 hover:bg-brand-500/30 text-brand-300 text-sm border border-brand-500/30 flex items-center gap-1.5 font-bold transition-all"
+              >
+                <Download className="w-4 h-4" />
+                הורד CSV
+              </button>
+            )}
+            <button
+              onClick={onClose}
+              className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white text-sm border border-white/10 font-bold transition-all"
+            >
+              סגור
+            </button>
+          </div>
         </div>
 
         {loading ? (
@@ -213,7 +245,7 @@ function EventRegistrationsModal({ isOpen, eventTitle, loading, registrations, o
             <span>טוען נרשמים...</span>
           </div>
         ) : registrations.length === 0 ? (
-          <p className="text-slate-400 py-4">אין כרגע נרשמים לאירוע זה.</p>
+          <p className="text-slate-400 py-4">אין כרגע נרשמים לאוונט זה.</p>
         ) : (
           <div className="space-y-2">
             {registrations.map((reg) => (
@@ -342,6 +374,7 @@ export default function EventsPage() {
   const [eventRegistrations, setEventRegistrations] = useState([]);
   const [selectedSlot, setSelectedSlot] = useState("");
   const [editingEvent, setEditingEvent] = useState(null);
+  const [exporting, setExporting] = useState(false);
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const token = localStorage.getItem("token");
@@ -517,6 +550,56 @@ export default function EventsPage() {
     }
   };
 
+  const handleDownloadAllRegistrations = async () => {
+    try {
+      setExporting(true);
+      const results = await Promise.all(
+        events.map(async (event) => {
+          try {
+            const regs = await registrationsApi.getByEvent(event.id);
+            return { event, regs };
+          } catch (e) {
+            console.error(`Failed to fetch regs for event ${event.id}:`, e);
+            return { event, regs: [] };
+          }
+        })
+      );
+      const headers = ["שם הנרשם", "מספר אישי", "אימייל", "מועד המצגת", "תאריך המצגת", "שם המצגת", "מיקום", "צוות מוביל", "סטטוס הרשמה"];
+      const rows = [];
+      
+      const usersById = (users || []).reduce((acc, u) => {
+        if (u?.id) acc[u.id] = u;
+        return acc;
+      }, {});
+
+      for (const { event, regs } of results) {
+        const slotObj = SLOTS.find(s => s.id === event.slot);
+        for (const r of regs) {
+          const name = r.User?.name || r.user?.name || r.name || usersById[r.userId]?.name || "משתמש";
+          const personalNumber = r.User?.personalNumber || r.user?.personalNumber || r.personalNumber || usersById[r.userId]?.email || "";
+          const email = r.User?.email || r.user?.email || r.email || "";
+          rows.push([
+            name,
+            personalNumber,
+            email,
+            slotObj?.label || event.slot || "",
+            slotObj?.date || "",
+            event.title || "",
+            event.location || "",
+            event.leadingTeam || "",
+            r.status || "CONFIRMED"
+          ]);
+        }
+      }
+
+      exportToCSV(headers, rows, "registrations_report.csv");
+    } catch (err) {
+      alert("שגיאה בייצוא הנתונים: " + err.message);
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const eventById = new Map(events.map((e) => [e.id, e]));
   const registeredEventIds = new Set(myRegistrations.map((r) => r.eventId));
   const registeredSlots = new Set(
@@ -618,6 +701,22 @@ export default function EventsPage() {
 
         {currentView === "stats" && (
           <motion.div key="stats" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6">
+            <div className="flex justify-between items-center bg-white/5 border border-white/10 rounded-2xl p-4">
+              <h2 className="text-xl font-black text-white">סטטיסטיקת הרשמות</h2>
+              <button
+                onClick={handleDownloadAllRegistrations}
+                disabled={exporting || events.length === 0}
+                className="px-4 py-2.5 bg-brand-500 hover:bg-brand-600 active:bg-brand-700 text-white rounded-xl font-bold shadow-xl shadow-brand-500/25 flex items-center gap-2 transition-all disabled:opacity-50 text-sm"
+              >
+                {exporting ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Download className="w-4 h-4" />
+                )}
+                {exporting ? "מייצא דוח..." : "ייצא דוח הרשמות מלא"}
+              </button>
+            </div>
+
             <div className="flex flex-col md:flex-row gap-4">
               <div className="bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 backdrop-blur-xl border border-emerald-400/20 rounded-2xl p-5">
                 <div className="flex items-center justify-between mb-3">
@@ -837,7 +936,7 @@ export default function EventsPage() {
       <RegistrationModal isOpen={isRegModalOpen} event={selectedEvent} onClose={() => setIsRegModalOpen(false)} onRegistered={fetchData} />
       <EventRegistrationsModal
         isOpen={eventRegsModalOpen}
-        eventTitle={selectedStatsEvent?.title || ""}
+        event={selectedStatsEvent}
         loading={eventRegsLoading}
         registrations={eventRegistrations}
         onClose={() => setEventRegsModalOpen(false)}
